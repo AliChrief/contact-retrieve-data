@@ -14,9 +14,21 @@ if ((isset($_GET["fullname"])) && isset($_GET["email"]) && isset($_GET["phone"])
     $message = $_GET["message"];
     
     
-    $query = $mysqli->prepare("INSERT INTO contacts(name, email,number,message) VALUE (?, ?,?,?)");
-    $query->bind_param("ssis", $name, $email,$number,$message);
-    $query->execute();
+    $insert_query = $mysqli->prepare("INSERT INTO contacts(name, email,number,message) VALUE (?, ?,?,?)");
+    $insert_query->bind_param("ssis", $name, $email,$number,$message);
+    $insert_query->execute();
 }
 
+$retrieve_query = $mysqli->prepare("SELECT name, email,number,message FROM contacts");
+$retrieve_query->execute();
+$array = $retrieve_query->get_result();
+
+$response = [];
+
+while($a = $array->fetch_assoc()){
+    $response[] = $a;
+}
+
+$json = json_encode($response);
+echo $json;
 ?>
